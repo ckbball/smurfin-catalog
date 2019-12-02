@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package catalog;
+
+service CatalogService {
+  rpc FindItems(Specification) returns (Response) {}
+  rpc Create(Item) returns (Response) {}
+  rpc RemoveItem(Specification) returns (Response) {}
+  rpc ListItems(ListSpecification) returns (Response) {}
+}
+
+message Item {
+  string id = 1;
+  string vendor_id = 2;
+  repeated string champions = 3;
+  int32 blue_essence = 4;
+  int32 riot_points = 5;
+  int32 solo = 6;
+  int32 flex = 7;
+  int32 price_dollars = 8;
+  int32 price_cents = 9;
+  int32 level = 10;
+  string email = 11;
+  string password = 12;
+  string login = 13;
+  string login_password = 14;
+}
+
+message Specification {
+  int32 solo = 1;
+  int32 flex = 2;
+  int32 price_dollars = 3;
+  int32 price_cents = 4;
+  string item_id = 5;
+  string vendor_id = 6;
+  int32 page_num = 7;
+  Item item = 8;
+}
+
+message Response {
+  Item item = 1;
+  repeated Item items = 2;
+  string vendor_id = 3;
+}
+
+message ListSpecification {
+  int32 solo = 1;
+  int32 flex = 2;
+  int32 price_dollars = 3;
+  int32 price_cents = 4;
+  string item_id = 5;
+  string vendor_id = 6;
+  int32 page = 7;
+  int32 limit = 8;
+}
