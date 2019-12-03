@@ -31,35 +31,35 @@ var _ context.Context
 var _ client.Option
 var _ server.Option
 
-// Client API for CatalogService service
+// Client API for Catalogservice service
 
-type CatalogService interface {
+type CatalogserviceService interface {
 	FindItems(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error)
 	Create(ctx context.Context, in *Item, opts ...client.CallOption) (*Response, error)
 	RemoveItem(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error)
 	ListItems(ctx context.Context, in *ListSpecification, opts ...client.CallOption) (*Response, error)
 }
 
-type catalogService struct {
+type catalogserviceService struct {
 	c    client.Client
 	name string
 }
 
-func NewCatalogService(name string, c client.Client) CatalogService {
+func NewCatalogserviceService(name string, c client.Client) CatalogserviceService {
 	if c == nil {
 		c = client.NewClient()
 	}
 	if len(name) == 0 {
 		name = "catalog"
 	}
-	return &catalogService{
+	return &catalogserviceService{
 		c:    c,
 		name: name,
 	}
 }
 
-func (c *catalogService) FindItems(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "CatalogService.FindItems", in)
+func (c *catalogserviceService) FindItems(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Catalogservice.FindItems", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -68,8 +68,8 @@ func (c *catalogService) FindItems(ctx context.Context, in *Specification, opts 
 	return out, nil
 }
 
-func (c *catalogService) Create(ctx context.Context, in *Item, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "CatalogService.Create", in)
+func (c *catalogserviceService) Create(ctx context.Context, in *Item, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Catalogservice.Create", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -78,8 +78,8 @@ func (c *catalogService) Create(ctx context.Context, in *Item, opts ...client.Ca
 	return out, nil
 }
 
-func (c *catalogService) RemoveItem(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "CatalogService.RemoveItem", in)
+func (c *catalogserviceService) RemoveItem(ctx context.Context, in *Specification, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Catalogservice.RemoveItem", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -88,8 +88,8 @@ func (c *catalogService) RemoveItem(ctx context.Context, in *Specification, opts
 	return out, nil
 }
 
-func (c *catalogService) ListItems(ctx context.Context, in *ListSpecification, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.name, "CatalogService.ListItems", in)
+func (c *catalogserviceService) ListItems(ctx context.Context, in *ListSpecification, opts ...client.CallOption) (*Response, error) {
+	req := c.c.NewRequest(c.name, "Catalogservice.ListItems", in)
 	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -98,45 +98,45 @@ func (c *catalogService) ListItems(ctx context.Context, in *ListSpecification, o
 	return out, nil
 }
 
-// Server API for CatalogService service
+// Server API for Catalogservice service
 
-type CatalogServiceHandler interface {
+type CatalogserviceHandler interface {
 	FindItems(context.Context, *Specification, *Response) error
 	Create(context.Context, *Item, *Response) error
 	RemoveItem(context.Context, *Specification, *Response) error
 	ListItems(context.Context, *ListSpecification, *Response) error
 }
 
-func RegisterCatalogServiceHandler(s server.Server, hdlr CatalogServiceHandler, opts ...server.HandlerOption) error {
-	type catalogService interface {
+func RegisterCatalogserviceHandler(s server.Server, hdlr CatalogserviceHandler, opts ...server.HandlerOption) error {
+	type catalogservice interface {
 		FindItems(ctx context.Context, in *Specification, out *Response) error
 		Create(ctx context.Context, in *Item, out *Response) error
 		RemoveItem(ctx context.Context, in *Specification, out *Response) error
 		ListItems(ctx context.Context, in *ListSpecification, out *Response) error
 	}
-	type CatalogService struct {
-		catalogService
+	type Catalogservice struct {
+		catalogservice
 	}
-	h := &catalogServiceHandler{hdlr}
-	return s.Handle(s.NewHandler(&CatalogService{h}, opts...))
+	h := &catalogserviceHandler{hdlr}
+	return s.Handle(s.NewHandler(&Catalogservice{h}, opts...))
 }
 
-type catalogServiceHandler struct {
-	CatalogServiceHandler
+type catalogserviceHandler struct {
+	CatalogserviceHandler
 }
 
-func (h *catalogServiceHandler) FindItems(ctx context.Context, in *Specification, out *Response) error {
-	return h.CatalogServiceHandler.FindItems(ctx, in, out)
+func (h *catalogserviceHandler) FindItems(ctx context.Context, in *Specification, out *Response) error {
+	return h.CatalogserviceHandler.FindItems(ctx, in, out)
 }
 
-func (h *catalogServiceHandler) Create(ctx context.Context, in *Item, out *Response) error {
-	return h.CatalogServiceHandler.Create(ctx, in, out)
+func (h *catalogserviceHandler) Create(ctx context.Context, in *Item, out *Response) error {
+	return h.CatalogserviceHandler.Create(ctx, in, out)
 }
 
-func (h *catalogServiceHandler) RemoveItem(ctx context.Context, in *Specification, out *Response) error {
-	return h.CatalogServiceHandler.RemoveItem(ctx, in, out)
+func (h *catalogserviceHandler) RemoveItem(ctx context.Context, in *Specification, out *Response) error {
+	return h.CatalogserviceHandler.RemoveItem(ctx, in, out)
 }
 
-func (h *catalogServiceHandler) ListItems(ctx context.Context, in *ListSpecification, out *Response) error {
-	return h.CatalogServiceHandler.ListItems(ctx, in, out)
+func (h *catalogserviceHandler) ListItems(ctx context.Context, in *ListSpecification, out *Response) error {
+	return h.CatalogserviceHandler.ListItems(ctx, in, out)
 }

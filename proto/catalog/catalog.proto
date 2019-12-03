@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package catalog;
 
-service CatalogService {
+service Catalogservice {
   rpc FindItems(Specification) returns (Response) {}
   rpc Create(Item) returns (Response) {}
   rpc RemoveItem(Specification) returns (Response) {}
