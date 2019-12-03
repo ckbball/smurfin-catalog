@@ -4,6 +4,7 @@ import (
   "context"
   "fmt"
   pb "github.com/ckbball/smurfin-catalog/proto/catalog"
+  k8s "github.com/micro/examples/kubernetes/go/micro"
   "github.com/micro/go-micro"
   "log"
   "os"
@@ -14,8 +15,8 @@ const (
 )
 
 func main() {
-  srv := micro.NewService(
-    micro.Name("go.micro.api.catalog"),
+  srv := k8s.NewService(
+    micro.Name("smurfin.catalog"),
   )
 
   srv.Init()
