@@ -37,7 +37,7 @@ func main() {
     itemCollection,
   }
 
-  pb.RegisterCatalogServiceHandler(srv.Server(), &handler{repository})
+  pb.RegisterCatalogserviceHandler(srv.Server(), &handler{repository})
 
   if err := srv.Run(); err != nil {
     fmt.Println(err)
