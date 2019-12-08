@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package catalogv1;
+
+import "google/protobuf/timestamp.proto";
+
+service CatalogService {
+  rpc FindItems(Specification) returns (Response) {}
+  rpc Create(CreateRequest) returns (CreateResponse) {}
+  rpc RemoveItem(RemoveRequest) returns (RemoveResponse) {}
+  rpc ListItems(ListRequest) returns (ListResponse) {}
+}
+
+message Item {
+  string id = 1;
+  string vendor_id = 2;
+  repeated string champions = 3;
+  int32 blue_essence = 4;
+  int32 riot_points = 5;
+  int32 solo = 6;
+  int32 flex = 7;
+  int32 price_dollars = 8;
+  int32 price_cents = 9;
+  int32 level = 10;
+  string email = 11;
+  string password = 12;
+  string login = 13;
+  string login_password = 14;
+}
+
+message CreateRequest {
+  string api = 1;
+  Item item = 2;
+}
+
+message CreateResponse {
+  string api = 1;
+  int64 id = 2;
+}
+
+message RemoveRequest {
+  string api = 1;
+  int64 id = 2;
+}
+message RemoveResponse {
+  string api = 1;
+  int64 deleted = 2;
+}
+
+message Specification {
+  int32 solo = 1;
+  int32 flex = 2;
+  int32 price_dollars = 3;
+  int32 price_cents = 4;
+  string item_id = 5;
+  string vendor_id = 6;
+  int32 page_num = 7;
+  Item item = 8;
+  string api = 9;
+}
+
+message Response {
+  string api = 1;
+  repeated Item items = 2;
+}
+
+message ListRequest {
+  string api = 1;
+  int64 page = 2;
+  int64 limit = 3;
+}
+
+message ListResponse {
+  string api = 1;
+  repeated Item items = 2;
+}
