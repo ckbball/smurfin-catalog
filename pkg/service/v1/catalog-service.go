@@ -44,6 +44,10 @@ func (s *catalogServiceServer) connect(ctx context.Context) (*sql.Conn, error) {
 }
 
 // Other service funcs
+
+// handler for find items endpoint
+// takes a list of fields to filter the query for
+// returns a list of items that match given query
 func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specification) (*v1.Response, error) {
   // check api version
   if err := s.checkAPI(req.Api); err != nil {
@@ -57,8 +61,13 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   }
   defer c.Close()
 
+  item_id := 0
+  if req.PageNum > 1 {
+    item_id = 20 * (req.PageNum - 1)
+  }
+
   // Query database
-  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE `solo`=? OR `flex`=?", req.Solo, req.Flex)
+  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE `id` > ? AND `solo`=? OR `flex`=? ORDER BY `id` ASC LIMIT 20", item_id, req.Solo, req.Flex)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
   }
@@ -147,4 +156,49 @@ func (s *catalogServiceServer) RemoveItem(ctx context.Context, req *v1.RemoveReq
     Api:     apiVersion,
     Deleted: rows,
   }, nil
+}
+
+func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListRequest) (*v1.ListResponse, error) {
+  // check api version
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  // get SQL connection
+  c, err := s.connect(ctx)
+  if err != nil {
+    return nil, err
+  }
+  defer c.Close()
+
+  item_id := 0
+  if req.Page > 1 {
+    item_id = 20 * (req.Page - 1)
+  }
+
+  // Query database
+  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE `id` > ? ORDER BY `id` ASC LIMIT 20", item_id)
+  if err != nil {
+    return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
+  }
+  defer rows.Close()
+
+  list := []*v1.Item{}
+  for rows.Next() {
+    it := *v1.Item
+    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
+      return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
+    }
+    list = append(list, it)
+  }
+
+  if err := rows.Err(); err != nil {
+    return nil, status.Error(codes.Unknown, "failed to retrieve data from item-> "+err.Error())
+  }
+
+  return &v1.ListResponse{
+    Api:   apiVersion,
+    Items: list,
+  }, nil
+
 }
