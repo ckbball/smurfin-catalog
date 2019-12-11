@@ -68,13 +68,13 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   for rows.Next() {
     it := *v1.Item
     if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
-      return nil, status.Error(codes.Unknown, "failed to retrieve field values from ToDo row-> "+err.Error())
+      return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
-    list = append(list, td)
+    list = append(list, it)
   }
 
   if err := rows.Err(); err != nil {
-    return nil, status.Error(codes.Unknown, "failed to retrieve data from ToDo-> "+err.Error())
+    return nil, status.Error(codes.Unknown, "failed to retrieve data from item-> "+err.Error())
   }
 
   return &v1.Response{
@@ -100,15 +100,51 @@ func (s *catalogServiceServer) Create(ctx context.Context, req *v1.CreateRequest
   res, err := c.ExecContext(ctx, "INSERT INTO items(`VendorId`, `BlueEssence`, `RiotPoints`, `Solo`, `Flex`, `PriceDollars`, `PriceCents`, `Level`, `Email`, `Password`, `Login`, `LoginPassword`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?",
     req.Item.VendorId, req.Item.BlueEssence, req.Item.RiotPoints, req.Item.Solo, req.Item.Flex, req.Item.PriceDollars, req.Item.PriceCents, req.Item.Level, req.Item.Email, req.Item.Password, req.Item.Login, req.Item.LoginPassword)
   if err != nil {
-    return nil, status.Error(codes.Unknown, "failed to insert into ToDo-> "+err.Error())
+    return nil, status.Error(codes.Unknown, "failed to insert into item-> "+err.Error())
   }
   id, err := res.LastInsertId()
   if err != nil {
-    return nil, status.Error(codes.Unknown, "failed to retrieve id for created ToDo-> "+err.Error())
+    return nil, status.Error(codes.Unknown, "failed to retrieve id for created item-> "+err.Error())
   }
 
   return &v1.CreateResponse{
     Api: apiVersion,
     Id:  id,
+  }, nil
+}
+
+// handles requests for the removeitem endpoint
+// takes an item id and api version
+// returns number of items deleted and api version
+func (s *catalogServiceServer) RemoveItem(ctx context.Context, req *v1.RemoveRequest) (*v1.RemoveResponse, error) {
+  // check api version
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+
+  // get SQL connection
+  c, err := s.connect(ctx)
+  if err != nil {
+    return nil, err
+  }
+  defer c.Close()
+
+  // db operation to delete specified item
+  res, err := c.ExecContext(ctx, "DELETE FROM items WHERE `ID`=?", req.Id)
+  if err != nil {
+    return nil, status.Error(codes.Unknown, "failed to delete item-> "+err.Error())
+  }
+
+  rows, err := res.RowsAffected()
+  if err != nil {
+    return nil, status.Error(codes.Unknown, "failed to get rows affected-> "+err.Error())
+  }
+  if rows == 0 {
+    return nil, status.Error(codes.Unknown, fmt.Sprintf("item with ID ='%d' not found", req.Id))
+  }
+
+  return &v1.DeleteResponse{
+    Api:     apiVersion,
+    Deleted: rows,
   }, nil
 }
