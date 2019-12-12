@@ -12,7 +12,7 @@ import (
   "github.com/ckbball/smurfin-catalog/pkg/api/v1"
 )
 
-// RunServer runs gRPC service to publish ToDo service
+// RunServer runs gRPC service to publish Catalog service
 func RunServer(ctx context.Context, v1API v1.CatalogServiceServer, port string) error {
   listen, err := net.Listen("tcp", ":"+port)
   if err != nil {
