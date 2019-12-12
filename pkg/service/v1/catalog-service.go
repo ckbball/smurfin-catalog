@@ -4,13 +4,13 @@ import (
   "context"
   "database/sql"
   "fmt"
-  "time"
+  //"time"
 
-  "github.com/golang/protobuf/ptypes"
+  //"github.com/golang/protobuf/ptypes"
   "google.golang.org/grpc/codes"
   "google.golang.org/grpc/status"
 
-  "github.com/ckbball/smurfin-catalogue/pkg/api/v1"
+  v1 "github.com/ckbball/smurfin-catalog/pkg/api/v1"
 )
 
 const (

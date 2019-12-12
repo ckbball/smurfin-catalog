@@ -9,7 +9,7 @@ import (
 
   "google.golang.org/grpc"
 
-  "github.com/ckbball/smurfin-catalog/pkg/api/v1"
+  v1 "github.com/ckbball/smurfin-catalog/pkg/api/v1"
 )
 
 // RunServer runs gRPC service to publish Catalog service
