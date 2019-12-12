@@ -5,6 +5,7 @@ import (
   "database/sql"
   "flag"
   "fmt"
+  "os"
 
   // mysql driver
   _ "github.com/go-sql-driver/mysql"
@@ -66,4 +67,11 @@ func RunServer() error {
   v1API := v1.NewCatalogServiceServer(db)
 
   return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
+}
+
+func main() {
+  if err := RunServer(); err != nil {
+    fmt.Fprintf(os.Stderr, "%v\n", err)
+    os.Exit(1)
+  }
 }
