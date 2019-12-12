@@ -63,7 +63,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
 
   item_id := 0
   if req.PageNum > 1 {
-    item_id = 20 * (req.PageNum - 1)
+    item_id = 20 * int((req.PageNum - 1))
   }
 
   // Query database
@@ -75,7 +75,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
 
   list := []*v1.Item{}
   for rows.Next() {
-    it := *v1.Item
+    it := *v1.Item{}
     if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
@@ -152,7 +152,7 @@ func (s *catalogServiceServer) RemoveItem(ctx context.Context, req *v1.RemoveReq
     return nil, status.Error(codes.Unknown, fmt.Sprintf("item with ID ='%d' not found", req.Id))
   }
 
-  return &v1.DeleteResponse{
+  return &v1.RemoveResponse{
     Api:     apiVersion,
     Deleted: rows,
   }, nil
@@ -173,7 +173,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
 
   item_id := 0
   if req.Page > 1 {
-    item_id = 20 * (req.Page - 1)
+    item_id = 20 * int((req.Page - 1))
   }
 
   // Query database
@@ -185,7 +185,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
 
   list := []*v1.Item{}
   for rows.Next() {
-    it := *v1.Item
+    it := *v1.Item{}
     if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
