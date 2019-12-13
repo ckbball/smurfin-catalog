@@ -106,7 +106,7 @@ func (s *catalogServiceServer) Create(ctx context.Context, req *v1.CreateRequest
   }
   defer c.Close()
 
-  res, err := c.ExecContext(ctx, "INSERT INTO items(VendorId, BlueEssence, RiotPoints, Solo, Flex, PriceDollars, PriceCents, Level, Email, Password, Login, LoginPassword) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?",
+  res, err := c.ExecContext(ctx, `INSERT INTO items (VendorId, BlueEssence, RiotPoints, Solo, Flex, PriceDollars, PriceCents, Level, Email, Password, Login, LoginPassword) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     req.Item.VendorId, req.Item.BlueEssence, req.Item.RiotPoints, req.Item.Solo, req.Item.Flex, req.Item.PriceDollars, req.Item.PriceCents, req.Item.Level, req.Item.Email, req.Item.Password, req.Item.Login, req.Item.LoginPassword)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to insert into item-> "+err.Error())

@@ -89,7 +89,7 @@ func main() {
   // Call FindItems
   req4 := v1.Specification{
     Api:  apiVersion,
-    Solo: 3,
+    Solo: 2,
   }
   res4, err := c.FindItems(ctx, &req4)
   if err != nil {
