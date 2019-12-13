@@ -67,7 +67,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   }
 
   // Query database
-  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE `id` > ? AND `solo`=? OR `flex`=? ORDER BY `id` ASC LIMIT 20", item_id, req.Solo, req.Flex)
+  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? AND solo=? OR flex=? ORDER BY id ASC LIMIT 20", item_id, req.Solo, req.Flex)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
   }
@@ -106,7 +106,7 @@ func (s *catalogServiceServer) Create(ctx context.Context, req *v1.CreateRequest
   }
   defer c.Close()
 
-  res, err := c.ExecContext(ctx, "INSERT INTO items(`VendorId`, `BlueEssence`, `RiotPoints`, `Solo`, `Flex`, `PriceDollars`, `PriceCents`, `Level`, `Email`, `Password`, `Login`, `LoginPassword`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?",
+  res, err := c.ExecContext(ctx, "INSERT INTO items(VendorId, BlueEssence, RiotPoints, Solo, Flex, PriceDollars, PriceCents, Level, Email, Password, Login, LoginPassword) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?",
     req.Item.VendorId, req.Item.BlueEssence, req.Item.RiotPoints, req.Item.Solo, req.Item.Flex, req.Item.PriceDollars, req.Item.PriceCents, req.Item.Level, req.Item.Email, req.Item.Password, req.Item.Login, req.Item.LoginPassword)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to insert into item-> "+err.Error())
@@ -139,7 +139,7 @@ func (s *catalogServiceServer) RemoveItem(ctx context.Context, req *v1.RemoveReq
   defer c.Close()
 
   // db operation to delete specified item
-  res, err := c.ExecContext(ctx, "DELETE FROM items WHERE `ID`=?", req.Id)
+  res, err := c.ExecContext(ctx, "DELETE FROM items WHERE ID=?", req.Id)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to delete item-> "+err.Error())
   }
@@ -177,7 +177,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
   }
 
   // Query database
-  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE `id` > ? ORDER BY `id` ASC LIMIT 20", item_id)
+  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? ORDER BY id ASC LIMIT 20", item_id)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
   }

@@ -6,10 +6,10 @@ import (
   "log"
   "time"
 
-  "github.com/golang/protobuf/ptypes"
+  //"github.com/golang/protobuf/ptypes"
   "google.golang.org/grpc"
 
-  "github.com/ckbball/smurfin-catalog/pkg/api/v1"
+  v1 "github.com/ckbball/smurfin-catalog/pkg/api/v1"
 )
 
 const (
@@ -34,22 +34,18 @@ func main() {
   ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
   defer cancel()
 
-  t := time.Now().In(time.UTC)
-  reminder, _ := ptypes.TimestampProto(t)
-  pfx := t.Format(time.RFC3339Nano)
-
   // Call Create
   req1 := v1.CreateRequest{
     Api: apiVersion,
     Item: &v1.Item{
-      VendorId: 2,
-      BlueEssence: 10000,
-      RiotPoints: 2000,
-      Solo: 3,
-      Flex: 4,
+      VendorId:     "2",
+      BlueEssence:  10000,
+      RiotPoints:   2000,
+      Solo:         3,
+      Flex:         4,
       PriceDollars: 20,
-      PriceCents: 99,
-      Level: 100
+      PriceCents:   99,
+      Level:        100,
     },
   }
   res1, err := c.Create(ctx, &req1)
@@ -62,8 +58,8 @@ func main() {
 
   // Read
   req2 := v1.ListRequest{
-    Api: apiVersion,
-    Page: 1,
+    Api:   apiVersion,
+    Page:  1,
     Limit: 20,
   }
   res2, err := c.ListItems(ctx, &req2)
@@ -74,26 +70,26 @@ func main() {
 
   // Update
   /*
-  req3 := v1.UpdateRequest{
-    Api: apiVersion,
-    ToDo: &v1.ToDo{
-      Id:          res2.ToDo.Id,
-      Title:       res2.ToDo.Title,
-      Description: res2.ToDo.Description + " + updated",
-      Reminder:    res2.ToDo.Reminder,
-    },
-  }
-  res3, err := c.Update(ctx, &req3)
-  if err != nil {
-    log.Fatalf("Update failed: %v", err)
-  }
-  log.Printf("Update result: <%+v>\n\n", res3)
+     req3 := v1.UpdateRequest{
+       Api: apiVersion,
+       ToDo: &v1.ToDo{
+         Id:          res2.ToDo.Id,
+         Title:       res2.ToDo.Title,
+         Description: res2.ToDo.Description + " + updated",
+         Reminder:    res2.ToDo.Reminder,
+       },
+     }
+     res3, err := c.Update(ctx, &req3)
+     if err != nil {
+       log.Fatalf("Update failed: %v", err)
+     }
+     log.Printf("Update result: <%+v>\n\n", res3)
   */
 
   // Call FindItems
   req4 := v1.Specification{
-    Api: apiVersion,
-    Solo: 3
+    Api:  apiVersion,
+    Solo: 3,
   }
   res4, err := c.FindItems(ctx, &req4)
   if err != nil {

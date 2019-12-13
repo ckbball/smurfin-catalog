@@ -5,7 +5,6 @@ import (
   "database/sql"
   "flag"
   "fmt"
-  "os"
 
   // mysql driver
   _ "github.com/go-sql-driver/mysql"
