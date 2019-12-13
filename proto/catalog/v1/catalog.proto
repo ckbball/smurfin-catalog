@@ -3,12 +3,60 @@ syntax = "proto3";
 package catalogv1;
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    title: "Catalog service":
+    version: "1.0";
+    contact: {
+      name: "catalog service";
+      url: "https://github.com/ckbball/smurfin-catalog";
+      email: "blah@happy.org";
+    };
+  };
+  schemes: HTTP;
+  consumes: "application/json";
+  produces: "application/json";
+  responses: {
+    key: "404";
+    value: {
+      description: "Returned when resource doesn't exist";
+      schema: {
+        json_schema: {
+          type: STRING;
+        }
+      }
+    }
+  }
+};
 
 service CatalogService {
-  rpc FindItems(Specification) returns (Response) {}
-  rpc Create(CreateRequest) returns (CreateResponse) {}
-  rpc RemoveItem(RemoveRequest) returns (RemoveResponse) {}
-  rpc ListItems(ListRequest) returns (ListResponse) {}
+  rpc FindItems(Specification) returns (Response) {
+    option (google.api.http) = {
+      post: "/v1/catalogs/search"
+      body: "*"
+    };
+  }
+
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/catalogs"
+      body: "*"
+    };
+  }
+  rpc RemoveItem(RemoveRequest) returns (RemoveResponse) {
+    option (google.api.http) = {
+      delete: "/v1/catalogs/{id}"
+    };
+  }
+  rpc ListItems(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+      post: "/v1/catalogs/"
+      body: "*"
+    };
+  }
   // maybe add update and read a single item
 }
 
