@@ -75,7 +75,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
 
   list := []*v1.Item{}
   for rows.Next() {
-    it := *v1.Item{}
+    it := new(v1.Item)
     if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
@@ -185,7 +185,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
 
   list := []*v1.Item{}
   for rows.Next() {
-    it := *v1.Item{}
+    it := new(v1.Item)
     if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }

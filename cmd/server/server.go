@@ -52,10 +52,12 @@ func RunServer() error {
   // Drop it for another database
   param := "parseTime=true"
 
-  dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?%s",
+  // for non localhost db %s:%s@tcp(%s)/%s?%s
+  // currently set for localhost
+  dsn := fmt.Sprintf("%s:%s@/%s?%s",
     cfg.DatastoreDBUser,
     cfg.DatastoreDBPassword,
-    cfg.DatastoreDBHost,
+    // cfg.DatastoreDBHost,
     cfg.DatastoreDBSchema,
     param)
   db, err := sql.Open("mysql", dsn)
