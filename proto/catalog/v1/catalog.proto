@@ -17,6 +17,7 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
     };
   };
   schemes: HTTP;
+  schemes: HTTPS;
   consumes: "application/json";
   produces: "application/json";
   responses: {
@@ -35,14 +36,14 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 service CatalogService {
   rpc FindItems(Specification) returns (Response) {
     option (google.api.http) = {
-      post: "/v1/catalogs/search"
+      post: "/v1/catalogs/search",
       body: "*"
     };
   }
 
   rpc Create(CreateRequest) returns (CreateResponse) {
     option (google.api.http) = {
-      post: "/v1/catalogs"
+      post: "/v1/catalogs",
       body: "*"
     };
   }
@@ -53,7 +54,7 @@ service CatalogService {
   }
   rpc ListItems(ListRequest) returns (ListResponse) {
     option (google.api.http) = {
-      post: "/v1/catalogs/"
+      post: "/v1/catalogs/list",
       body: "*"
     };
   }
