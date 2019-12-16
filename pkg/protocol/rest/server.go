@@ -11,7 +11,7 @@ import (
   "github.com/grpc-ecosystem/grpc-gateway/runtime"
   "google.golang.org/grpc"
 
-  "github.com/ckbball/smurfin-catalog/pkg/api/v1"
+  v1 "github.com/ckbball/smurfin-catalog/pkg/api/v1"
 )
 
 // RunServer runs HTTP/REST gateway

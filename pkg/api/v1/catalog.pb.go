@@ -10,6 +10,8 @@ import (
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -746,6 +748,23 @@ type CatalogServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	RemoveItem(context.Context, *RemoveRequest) (*RemoveResponse, error)
 	ListItems(context.Context, *ListRequest) (*ListResponse, error)
+}
+
+// UnimplementedCatalogServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedCatalogServiceServer struct {
+}
+
+func (*UnimplementedCatalogServiceServer) FindItems(ctx context.Context, req *Specification) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindItems not implemented")
+}
+func (*UnimplementedCatalogServiceServer) Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (*UnimplementedCatalogServiceServer) RemoveItem(ctx context.Context, req *RemoveRequest) (*RemoveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveItem not implemented")
+}
+func (*UnimplementedCatalogServiceServer) ListItems(ctx context.Context, req *ListRequest) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListItems not implemented")
 }
 
 func RegisterCatalogServiceServer(s *grpc.Server, srv CatalogServiceServer) {
