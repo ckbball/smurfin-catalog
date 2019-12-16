@@ -69,13 +69,13 @@ func main() {
   bodyBytes, err = ioutil.ReadAll(resp.Body)
   resp.Body.Close()
   if err != nil {
-    body = fmt.Sprintf("failed read ReadAll response body: %v", err)
+    body = fmt.Sprintf("failed read Search response body: %v", err)
   } else {
     body = string(bodyBytes)
   }
-  log.Printf("ReadAll response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
+  log.Printf("Search response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
-  // Call ReadAll
+  // Call List
   resp, err = http.Post(*address+"/v1/catalogs/search", "application/json", strings.NewReader(fmt.Sprintf(`
     {
       "api":"v1",
@@ -86,14 +86,14 @@ func main() {
   bodyBytes, err = ioutil.ReadAll(resp.Body)
   resp.Body.Close()
   if err != nil {
-    body = fmt.Sprintf("failed read ReadAll response body: %v", err)
+    body = fmt.Sprintf("failed read List response body: %v", err)
   } else {
     body = string(bodyBytes)
   }
-  log.Printf("ReadAll response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
+  log.Printf("List response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
   // Call Delete
-  req, err = http.NewRequest("DELETE", fmt.Sprintf("%s%s/%s", *address, "/v1/catalogs", created.ID), nil)
+  req, err := http.NewRequest("DELETE", fmt.Sprintf("%s%s/%s", *address, "/v1/catalogs", created.ID), nil)
   resp, err = http.DefaultClient.Do(req)
   if err != nil {
     log.Fatalf("failed to call Delete method: %v", err)
