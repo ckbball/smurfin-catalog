@@ -60,7 +60,9 @@ func main() {
     {
       "api":"v1",
       "solo": 3,
-      "flex": 2
+      "flex": 2,
+      "page": 1,
+      "limit": 20
     }
   `, pfx, pfx, pfx)))
   if err != nil {
@@ -76,11 +78,11 @@ func main() {
   log.Printf("Search response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
   // Call List
-  resp, err = http.Post(*address+"/v1/catalogs/search", "application/json", strings.NewReader(fmt.Sprintf(`
+  resp, err = http.Post(*address+"/v1/catalogs/list", "application/json", strings.NewReader(fmt.Sprintf(`
     {
       "api":"v1",
-      "solo": 3,
-      "flex": 2
+      "page": 1,
+      "limit": 20
     }
   `, pfx, pfx, pfx)))
   bodyBytes, err = ioutil.ReadAll(resp.Body)
