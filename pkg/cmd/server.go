@@ -7,7 +7,10 @@ import (
   "fmt"
 
   // mysql driver
+  "github.com/go-redis/cache/v7"
+  "github.com/go-redis/redis/v7"
   _ "github.com/go-sql-driver/mysql"
+  "github.com/vmihailenco/msgpack/v4"
 
   "github.com/ckbball/smurfin-catalog/pkg/protocol/grpc"
   "github.com/ckbball/smurfin-catalog/pkg/protocol/rest"
@@ -32,6 +35,8 @@ type Config struct {
   DatastoreDBPassword string
   // DatastoreDBSchema is schema of database
   DatastoreDBSchema string
+  // address for single redis node
+  RedisAddress string
 }
 
 // RunServer runs gRPC server and HTTP gateway
@@ -46,6 +51,7 @@ func RunServer() error {
   flag.StringVar(&cfg.DatastoreDBUser, "db-user", "", "Database user")
   flag.StringVar(&cfg.DatastoreDBPassword, "db-password", "", "Database password")
   flag.StringVar(&cfg.DatastoreDBSchema, "db-schema", "", "Database schema")
+  flag.StringVar(&cfg.RedisAddress, "redis-address", "", "Redis address")
   flag.Parse()
 
   if len(cfg.GRPCPort) == 0 {
@@ -74,7 +80,9 @@ func RunServer() error {
   }
   defer db.Close()
 
-  v1API := v1.NewCatalogServiceServer(db)
+  redisPool := initRedis(cfg.RedisAddress)
+
+  v1API := v1.NewCatalogServiceServer(db, redisPool)
 
   // run http gateway
   go func() {
@@ -82,4 +90,25 @@ func RunServer() error {
   }()
 
   return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
+}
+
+func initRedis(address string) *cache.Codec {
+  ring := redis.NewRing(&redis.RingOptions{
+    Addrs: map[string]string{
+      "server1": ":" + address,
+    },
+  })
+
+  codec := &cache.Codec{
+    Redis: ring,
+
+    Marshal: func(v interface{}) ([]byte, error) {
+      return msgpack.Marshal(v)
+    },
+    Unmarshal: func(b []byte, v interface{}) error {
+      return msgpack.Unmarshal(b, v)
+    },
+  }
+
+  return codec
 }

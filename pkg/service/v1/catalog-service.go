@@ -7,6 +7,7 @@ import (
   //"time"
 
   //"github.com/golang/protobuf/ptypes"
+  "github.com/go-redis/cache/v7"
   "google.golang.org/grpc/codes"
   "google.golang.org/grpc/status"
 
@@ -18,7 +19,8 @@ const (
 )
 
 type catalogServiceServer struct {
-  db *sql.DB
+  db    *sql.DB
+  rconn *cache.Codec
 }
 
 func NewCatalogServiceServer(db *sql.DB) v1.CatalogServiceServer {
