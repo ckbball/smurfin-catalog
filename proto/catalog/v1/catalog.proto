@@ -63,7 +63,7 @@ service CatalogService {
       get: "v1/catalogs/{id}"
     };
   }
-  // maybe add update and read a single item
+  // maybe add update 
 }
 
 message Item {
@@ -133,4 +133,9 @@ message ListResponse {
 message GetByIdRequest {
   string api = 1;
   int64 id = 2;
+}
+
+message GetByIdResponse {
+  string api = 1;
+  Item item = 2;
 }

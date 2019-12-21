@@ -19,8 +19,8 @@ const (
 )
 
 type catalogServiceServer struct {
-  db    *sql.DB
-  rconn *cache.Codec
+  db     *sql.DB
+  rcache *cache.Codec
 }
 
 func NewCatalogServiceServer(db *sql.DB) v1.CatalogServiceServer {
@@ -46,6 +46,60 @@ func (s *catalogServiceServer) connect(ctx context.Context) (*sql.Conn, error) {
 }
 
 // Other service funcs
+
+// handler for getbyid endpoint
+// takes an id in the url path
+// returns item matching id
+func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdRequest) (*v1.GetByIdResponse, error) {
+  // check api version
+  if err := s.checkAPI(req.Api); err != nil {
+    return nil, err
+  }
+  //check cache
+  item := new(v1.Item)
+  err = s.rcache.Get(req.Id, &item)
+  if err == nil && item != nil {
+    // return proper stuff
+    return &v1.GetByIdResponse{
+      Api:  apiVersion,
+      Item: &item,
+    }, nil
+  }
+
+  // get SQL connection
+  c, err := s.connect(ctx)
+  if err != nil {
+    return nil, err
+  }
+  defer c.Close()
+
+  // db get
+  rows, err := c.QueryContext(ctx, "SELECT id, vendorid, blueessence, riotpoints, solo, flex, pricedollars, pricecents, level FROM items WHERE id=?", req.Id)
+  if err != nil {
+    return nil, status.Error(codes.Unknown, "failed to get item by id-> "+err.Error())
+  }
+  defer rows.Close()
+
+  if !rows.Next() {
+    if err := rows.Err(); err != nil {
+      return nil, status.Error(codes.Unknown, "failed to retrieve data from items-> "+err.Error())
+    }
+    return nil, status.Error(codes.NotFound, fmt.Sprintf("items with ID='%d' is not found",
+      req.Id))
+  }
+
+  if err = rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level); err != nil {
+    return nil, status.Error(codes.Unknown, "failed to retrieve field values from ToDo row-> "+err.Error())
+  }
+  if rows.Next() {
+    return nil, status.Error(codes.Unknown, fmt.Sprintf("found multiple items rows with ID='%d'",
+      req.Id))
+  }
+  return &v1.GetByIdResponse{
+    Api:  apiVersion,
+    Item: &item,
+  }, nil
+}
 
 // handler for find items endpoint
 // takes a list of fields to filter the query for
