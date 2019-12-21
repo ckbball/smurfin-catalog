@@ -235,6 +235,9 @@
         },
         "haha": {
           "type": "string"
+        },
+        "from": {
+          "type": "string"
         }
       }
     },

@@ -5,7 +5,7 @@ import (
   "database/sql"
   "fmt"
   "strconv"
-  //"time"
+  "time"
 
   //"github.com/golang/protobuf/ptypes"
   "github.com/go-redis/cache/v7"
@@ -67,6 +67,7 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
     return &v1.GetByIdResponse{
       Api:  apiVersion,
       Item: item,
+      From: "Cache",
     }, nil
   }
 
@@ -99,9 +100,17 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
     return nil, status.Error(codes.Unknown, fmt.Sprintf("found multiple items rows with ID='%d'",
       req.Id))
   }
+
+  s.rcache.Set(&cache.Item{
+    Key:        item.Id,
+    Object:     item,
+    Expiration: time.Hour * 6,
+  })
+
   return &v1.GetByIdResponse{
     Api:  apiVersion,
     Item: item,
+    From: "Database",
   }, nil
 }
 
@@ -212,6 +221,11 @@ func (s *catalogServiceServer) RemoveItem(ctx context.Context, req *v1.RemoveReq
   }
   if rows == 0 {
     return nil, status.Error(codes.Unknown, fmt.Sprintf("item with ID ='%d' not found", req.Id))
+  }
+
+  err = s.rcache.Delete(strconv.Itoa(int(req.Id)))
+  if err != nil {
+    return nil, status.Error(codes.Unknown, "Cache delete failed: "+err.Error())
   }
 
   return &v1.RemoveResponse{
