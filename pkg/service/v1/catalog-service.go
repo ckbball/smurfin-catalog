@@ -56,6 +56,9 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
   if err := s.checkAPI(req.Api); err != nil {
     return nil, err
   }
+
+  // access query params through fields in message of proto files.
+
   //check cache
   item := new(v1.Item)
   err := s.rcache.Get(strconv.Itoa(int(req.Id)), &item)
@@ -166,7 +169,7 @@ func (s *catalogServiceServer) Create(ctx context.Context, req *v1.CreateRequest
   defer c.Close()
 
   res, err := c.ExecContext(ctx, `INSERT INTO items (VendorId, BlueEssence, RiotPoints, Solo, Flex, PriceDollars, PriceCents, Level, Email, Password, Login, LoginPassword) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    req.Item.VendorId, req.Item.BlueEssence, req.Item.RiotPoints, req.Item.Solo, req.Item.Flex, req.Item.PriceDollars, req.Item.PriceCents, req.Item.Level, req.Item.Email, req.Item.Password, req.Item.Login, req.Item.LoginPassword)
+    req.Item.VendorId, req.Item.BlueEssence, req.Item.RiotPoints, req.Item.Solo, req.Item.Flex, req.Item.PriceDollars, req.Item.PriceCents, req.Item.Level, req.Item.Email, req.Item.EmailPassword, req.Item.LoginName, req.Item.LoginPassword)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to insert into item-> "+err.Error())
   }
@@ -262,4 +265,5 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
     Items: list,
   }, nil
 
+  // will need to add a function to get private info for the email to send
 }

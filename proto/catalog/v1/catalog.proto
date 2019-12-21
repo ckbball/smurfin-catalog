@@ -78,8 +78,8 @@ message Item {
   int32 price_cents = 9;
   int32 level = 10;
   string email = 11;
-  string password = 12;
-  string login = 13;
+  string email_password = 12;
+  string login_name = 13;
   string login_password = 14;
 }
 
@@ -133,9 +133,12 @@ message ListResponse {
 message GetByIdRequest {
   string api = 1;
   int64 id = 2;
+  string haha = 3;
+
 }
 
 message GetByIdResponse {
   string api = 1;
   Item item = 2;
+  string haha = 3;
 }

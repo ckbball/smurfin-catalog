@@ -150,6 +150,12 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "haha",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -226,6 +232,9 @@
         },
         "item": {
           "$ref": "#/definitions/catalogv1Item"
+        },
+        "haha": {
+          "type": "string"
         }
       }
     },
@@ -275,10 +284,10 @@
         "email": {
           "type": "string"
         },
-        "password": {
+        "email_password": {
           "type": "string"
         },
-        "login": {
+        "login_name": {
           "type": "string"
         },
         "login_password": {
