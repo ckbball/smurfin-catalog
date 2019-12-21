@@ -4,6 +4,7 @@ import (
   "context"
   "database/sql"
   "fmt"
+  "strconv"
   //"time"
 
   //"github.com/golang/protobuf/ptypes"
@@ -23,8 +24,8 @@ type catalogServiceServer struct {
   rcache *cache.Codec
 }
 
-func NewCatalogServiceServer(db *sql.DB) v1.CatalogServiceServer {
-  return &catalogServiceServer{db: db}
+func NewCatalogServiceServer(db *sql.DB, rcache *cache.Codec) v1.CatalogServiceServer {
+  return &catalogServiceServer{db: db, rcache: rcache}
 }
 
 func (s *catalogServiceServer) checkAPI(api string) error {
@@ -57,12 +58,12 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
   }
   //check cache
   item := new(v1.Item)
-  err = s.rcache.Get(req.Id, &item)
+  err := s.rcache.Get(strconv.Itoa(int(req.Id)), &item)
   if err == nil && item != nil {
     // return proper stuff
     return &v1.GetByIdResponse{
       Api:  apiVersion,
-      Item: &item,
+      Item: item,
     }, nil
   }
 
@@ -88,7 +89,7 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
       req.Id))
   }
 
-  if err = rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level); err != nil {
+  if err = rows.Scan(&item.Id, &item.VendorId, &item.BlueEssence, &item.RiotPoints, &item.Solo, &item.Flex, &item.PriceDollars, &item.PriceCents, &item.Level); err != nil {
     return nil, status.Error(codes.Unknown, "failed to retrieve field values from ToDo row-> "+err.Error())
   }
   if rows.Next() {
@@ -97,7 +98,7 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
   }
   return &v1.GetByIdResponse{
     Api:  apiVersion,
-    Item: &item,
+    Item: item,
   }, nil
 }
 
@@ -125,7 +126,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   // add caching logic here
 
   // Query database
-  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? AND solo=? OR flex=? ORDER BY id ASC LIMIT 20", item_id, req.Solo, req.Flex)
+  rows, err := c.QueryContext(ctx, "SELECT id, vendorid, blueessence, riotpoints, solo, flex, pricedollars, pricecents, level FROM items WHERE id > ? AND solo=? OR flex=? ORDER BY id ASC LIMIT 20", item_id, req.Solo, req.Flex)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
   }
@@ -134,7 +135,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   list := []*v1.Item{}
   for rows.Next() {
     it := new(v1.Item)
-    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, _, _, _, _); err != nil {
+    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
     list = append(list, it)
@@ -237,7 +238,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
   // add caching logic here
 
   // Query database
-  rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? ORDER BY id ASC LIMIT 20", item_id)
+  rows, err := c.QueryContext(ctx, "SELECT id, vendorid, blueessence, riotpoints, solo, flex, pricedollars, pricecents, level FROM items WHERE id > ? ORDER BY id ASC LIMIT 20", item_id)
   if err != nil {
     return nil, status.Error(codes.Unknown, "failed to query items: "+err.Error())
   }
@@ -246,7 +247,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
   list := []*v1.Item{}
   for rows.Next() {
     it := new(v1.Item)
-    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, _, _, _, _); err != nil {
+    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
     list = append(list, it)

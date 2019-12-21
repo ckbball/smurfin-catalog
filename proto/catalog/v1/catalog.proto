@@ -60,7 +60,7 @@ service CatalogService {
   }
   rpc GetById(GetByIdRequest) returns (GetByIdResponse) {
     option (google.api.http) = {
-      get: "v1/catalogs/{id}"
+      get: "/v1/catalogs/{id}"
     };
   }
   // maybe add update 
