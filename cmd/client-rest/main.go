@@ -28,7 +28,9 @@ func main() {
       "item": {
         "vendor_id":"3",
         "blue_essence":10000,
-        "solo":3
+        "solo":3,
+        "email": "bobby@gmail.com",
+        "password": "haha"
       }
     }
   `, pfx, pfx, pfx)))
