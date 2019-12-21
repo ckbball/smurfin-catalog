@@ -68,6 +68,8 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
     item_id = 20 * int((req.PageNum - 1))
   }
 
+  // add caching logic here
+
   // Query database
   rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? AND solo=? OR flex=? ORDER BY id ASC LIMIT 20", item_id, req.Solo, req.Flex)
   if err != nil {
@@ -78,7 +80,7 @@ func (s *catalogServiceServer) FindItems(ctx context.Context, req *v1.Specificat
   list := []*v1.Item{}
   for rows.Next() {
     it := new(v1.Item)
-    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
+    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, _, _, _, _); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
     list = append(list, it)
@@ -178,6 +180,8 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
     item_id = 20 * int((req.Page - 1))
   }
 
+  // add caching logic here
+
   // Query database
   rows, err := c.QueryContext(ctx, "SELECT * FROM items WHERE id > ? ORDER BY id ASC LIMIT 20", item_id)
   if err != nil {
@@ -188,7 +192,7 @@ func (s *catalogServiceServer) ListItems(ctx context.Context, req *v1.ListReques
   list := []*v1.Item{}
   for rows.Next() {
     it := new(v1.Item)
-    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, &it.Email, &it.Password, &it.Login, &it.LoginPassword); err != nil {
+    if err := rows.Scan(&it.Id, &it.VendorId, &it.BlueEssence, &it.RiotPoints, &it.Solo, &it.Flex, &it.PriceDollars, &it.PriceCents, &it.Level, _, _, _, _); err != nil {
       return nil, status.Error(codes.Unknown, "failed to retrieve field values from item row-> "+err.Error())
     }
     list = append(list, it)

@@ -58,6 +58,11 @@ service CatalogService {
       body: "*"
     };
   }
+  rpc GetById(GetByIdRequest) returns (GetByIdResponse) {
+    option (google.api.http) = {
+      get: "v1/catalogs/{id}"
+    };
+  }
   // maybe add update and read a single item
 }
 
@@ -123,4 +128,9 @@ message ListRequest {
 message ListResponse {
   string api = 1;
   repeated Item items = 2;
+}
+
+message GetByIdRequest {
+  string api = 1;
+  int64 id = 2;
 }
