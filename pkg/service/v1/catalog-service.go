@@ -57,8 +57,6 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
     return nil, err
   }
 
-  // access query params through fields in message of proto files.
-
   //check cache
   item := new(v1.Item)
   err := s.rcache.Get(strconv.Itoa(int(req.Id)), &item)
