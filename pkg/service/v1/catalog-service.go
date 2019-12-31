@@ -61,7 +61,7 @@ func (s *catalogServiceServer) GetById(ctx context.Context, req *v1.GetByIdReque
   item := new(v1.Item)
   err := s.rcache.Get(strconv.Itoa(int(req.Id)), &item)
   if err == nil && item != nil {
-    // return proper stuff
+    // return object from cache
     return &v1.GetByIdResponse{
       Api:  apiVersion,
       Item: item,

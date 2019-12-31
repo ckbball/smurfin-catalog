@@ -82,6 +82,7 @@ func RunServer() error {
 
   redisPool := initRedis(cfg.RedisAddress)
 
+  // Register handler with server interface
   v1API := v1.NewCatalogServiceServer(db, redisPool)
 
   // run http gateway
@@ -89,6 +90,7 @@ func RunServer() error {
     _ = rest.RunServer(ctx, cfg.GRPCPort, cfg.HTTPPort)
   }()
 
+  // run grpc catalog server
   return grpc.RunServer(ctx, v1API, cfg.GRPCPort)
 }
 
